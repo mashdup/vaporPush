@@ -31,7 +31,8 @@ public func configure(
         sqlite = try SQLiteDatabase(storage: .file(path: Environment.get("SQLITE_PATH")!))
     } else {
         /// Create an in-memory SQLite database
-        sqlite = try SQLiteDatabase(storage: .memory)
+        
+        sqlite = try SQLiteDatabase(storage: .file(path: "database.sqlite"))
     }
 
     /// Register the configured SQLite database to the database config.
@@ -42,6 +43,7 @@ public func configure(
     /// Configure migrations
     var migrations = MigrationConfig()
     migrations.add(model: Todo.self, database: .sqlite)
+    migrations.add(model: Device.self, database: .sqlite)
     services.register(migrations)
 
 }
