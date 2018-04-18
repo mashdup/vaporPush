@@ -8,7 +8,9 @@ do {
     var config = Config.default()
     var env = try Environment.detect()
     var services = Services.default()
-
+    let teamId = "BDU2WRE6PL"
+    let keyId = "RRL9GASC33"
+    
     try App.configure(&config, &env, &services)
 
     let app = try Application(

@@ -16,6 +16,6 @@ public func routes(_ router: Router) throws {
     router.post("todos", use: todoController.create)
     router.delete("todos", Todo.parameter, use: todoController.delete)
     
-    let userController = DeviceController()
-    try router.register(collection: userController)
+    let deviceController = DeviceController()
+    try router.register(collection: deviceController)
 }

@@ -8,6 +8,8 @@ struct DeviceController : RouteCollection {
         router.get("api",routeBase, use: getAllHandler)
         router.get("api",routeBase, Device.parameter, use: getDeviceHandler)
         router.get("api",routeBase,"user",Int.parameter, use: getDeviceByUserIdHandler)
+        router.delete("api",routeBase,"user",Int.parameter, use: deleteDeviceByUserId)
+        router.delete("api",routeBase,"token",String.parameter, use: deleteDeviceByToken)
         router.delete("api",routeBase,Device.parameter, use: deleteHandler)
     }
     
@@ -43,6 +45,31 @@ struct DeviceController : RouteCollection {
 
         let device = try req.parameter(Device.self)
         return device.delete(on: req).transform(to: .noContent)
+        
+    }
+    
+    func deleteDeviceByUserId(_ req : Request) throws -> Future <HTTPStatus> {
+        let userId = try req.parameter(Int.self)
+        
+        return try Device.query(on: req).filter(\.userId == userId).all().map(to: [Device].self) { devices in
+            if devices.count == 0 {throw Abort(.notFound, reason: "Could not find any devices")}
+            for device in devices {
+                _ = device.delete(on: req)
+            }
+            return devices
+        }.transform(to: .noContent)
+    }
+    
+    func deleteDeviceByToken(_ req : Request) throws -> Future <HTTPStatus> {
+        let token = try req.parameter(String.self)
+        
+        return try Device.query(on: req).filter(\.deviceUUID == token).all().map(to: [Device].self) { devices in
+            if devices.count == 0 {throw Abort(.notFound, reason: "Could not find any devices")}
+            for device in devices {
+                _ = device.delete(on: req)
+            }
+            return devices
+        }.transform(to: .noContent)
         
     }
 }
